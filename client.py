@@ -1,8 +1,7 @@
 import socket
 import os
 import math
-import fcntl
-import struct
+from uuid import getnode as get_mac
 
 
 #192.168.1.118
@@ -10,6 +9,14 @@ SIZE = 1024
 
 
 def main():
+
+    randArr = ["r","z","q","w","m","c","g","p","h","l"]
+
+    mac=get_mac()
+    resultM=""
+    for char in str(mac):
+        resultM+= randArr[int(char)]
+    resultM += "-client"
 
     while True:
         IP = input("Enter IP Address for the server:\n")
@@ -98,7 +105,7 @@ def main():
                                             break
                                 
                                 
-                                toSend = "upload,"+visbilityFinal+","+downloadabilityFinal+","+key+","+ str(socket.gethostbyname(socket.gethostname())) +","+ str(os.path.getsize(file))+","+os.path.basename(file)
+                                toSend = "upload,"+visbilityFinal+","+downloadabilityFinal+","+key+","+ resultM +","+ str(os.path.getsize(file))+","+os.path.basename(file)
                                 print("Upload in progress...")
                                 client.send(toSend.encode())
 
@@ -143,7 +150,7 @@ def main():
                             key = input("Enter your secret key\n")
 
                         os.system('cls')
-                        client.send(("view,"+key+","+str(socket.gethostbyname(socket.gethostname()))).encode())
+                        client.send(("view,"+key+","+resultM).encode())
                         
 
                         result = client.recv(SIZE).decode()
@@ -214,7 +221,7 @@ def main():
                                         break
                             
                             
-                            toSend = "download,"+visbilityFinal+","+downloadabilityFinal+","+key+","+ str(socket.gethostbyname(socket.gethostname()))+","+filename
+                            toSend = "download,"+visbilityFinal+","+downloadabilityFinal+","+key+","+ resultM+","+filename
                             print("Download in progress...")
                             client.send(toSend.encode())
 
