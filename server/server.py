@@ -104,7 +104,7 @@ def main():
                                     elif(data_split[1] in subdir and data_split[1] != ""):
                                         downloadable+=(file+ "/y/key,")
                                     else:
-                                        if(subdir.count(".")==4):
+                                        if("-client" in subdir):
                                             downloadable+=(file + "/n/client,")
                                         else:
                                             downloadable+=(file + "/n/key,")
