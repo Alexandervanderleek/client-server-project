@@ -1,6 +1,7 @@
 import socket
 import os
 import math
+from _thread import *
  
 #SETTING BUFFER SIZE AND IP AND PORT FOR SERVER
 
@@ -18,16 +19,15 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     server.listen(5)
+    
 
+    #function for creating new threads with connection variable
+    def new_thread_client(conn):
 
-    #Our main loop to keep server running and checking for connections
-    while True:
+         #Accept a connection and send a OK response to the client
+        conn.send('OK'.encode()) 
 
-        #Accept a connection and send a OK response to the client
-        conn, addr = server.accept()
-        conn.send('OK'.encode())
-        
-        #our inner while loop for taking client commands
+        #our while loop for taking client commands
         while True:
 
             #accept client commands, create a array of 'header' style data
@@ -156,14 +156,14 @@ def main():
 
                         #Checking for if that file exists and sends error with error code if not
                         if(os.path.isfile(url)):
-                             conn.send(str(os.path.getsize(url)).encode())
+                            conn.send(str(os.path.getsize(url)).encode())
 
-                             f = open(url,'rb')
-                             l = f.read(1024)
-                             while (l):
+                            f = open(url,'rb')
+                            l = f.read(1024)
+                            while (l):
                                 conn.send(l)
                                 l = f.read(1024)
-                             f.close()
+                            f.close()
 
                         #otherwise error no file found
                         else:
@@ -182,8 +182,13 @@ def main():
                 case "quit":
                     conn.close()
                     break
-
-
+    
+    #main while loop constantly accept connections and allows for multiple threads
+    while True:
+        conn, addr = server.accept()
+        start_new_thread(new_thread_client,(conn,))
+    
+        
 
 
 if __name__ == "__main__":
